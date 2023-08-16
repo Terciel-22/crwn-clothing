@@ -29,8 +29,13 @@ const SignUpForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (!displayName || !email || !password || !confirmPassword) {
+      alert("Fill all the empty fields.");
+      return;
+    }
+
     if (password !== confirmPassword) {
-      alert("Password nad Confirm Password does not match.");
+      alert("Password and Confirm Password does not match.");
       return;
     }
 
@@ -39,8 +44,19 @@ const SignUpForm = () => {
       await createUserDocumentFromAuth(user, { displayName });
       resetFormFields();
     } catch (error) {
-      console.error(`Failed with error code: ${error.code}`);
-      console.error(error.message);
+      switch (error.code) {
+        case "auth/weak-password":
+          alert("Password should be at least 6 characters.");
+          break;
+        case "auth/email-already-in-use":
+          alert("The email is already in use.");
+          break;
+        case "auth/invalid-email":
+          alert("The email is invalid.");
+          break;
+        default:
+          console.log(error);
+      }
     }
   };
 
@@ -53,7 +69,6 @@ const SignUpForm = () => {
           label="Display Name"
           inputOptions={{
             type: "text",
-            required: true,
             onChange: handleChange,
             name: "displayName",
             value: displayName,
@@ -62,8 +77,7 @@ const SignUpForm = () => {
         <FormInput
           label="Email"
           inputOptions={{
-            type: "email",
-            required: true,
+            type: "text",
             onChange: handleChange,
             name: "email",
             value: email,
@@ -73,7 +87,6 @@ const SignUpForm = () => {
           label="Password"
           inputOptions={{
             type: "password",
-            required: true,
             onChange: handleChange,
             name: "password",
             value: password,
@@ -83,7 +96,6 @@ const SignUpForm = () => {
           label="Confirm Password"
           inputOptions={{
             type: "password",
-            required: true,
             onChange: handleChange,
             name: "confirmPassword",
             value: confirmPassword,

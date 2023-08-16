@@ -28,16 +28,36 @@ const SignInForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (!email || !password) {
+      alert("Fill all the empty fields.");
+      return;
+    }
+
     try {
       const response = await signInAuthWithUserAndPassword(email, password);
       console.log(response);
       resetFormFields();
-    } catch (error) {}
+    } catch (error) {
+      switch (error.code) {
+        case "auth/user-not-found":
+          alert("No user is associated with this email.");
+          break;
+        case "auth/wrong-password":
+          alert("The password is incorrect.");
+          break;
+        default:
+          console.log(error);
+      }
+    }
   };
 
   const signInWithGoogle = async () => {
-    const { user } = await signInWithGooglePopup();
-    createUserDocumentFromAuth(user);
+    try {
+      const { user } = await signInWithGooglePopup();
+      createUserDocumentFromAuth(user);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -49,8 +69,8 @@ const SignInForm = () => {
           label="Email"
           inputOptions={{
             type: "email",
-            required: true,
             onChange: handleChange,
+            required: true,
             name: "email",
             value: email,
           }}
@@ -59,8 +79,8 @@ const SignInForm = () => {
           label="Password"
           inputOptions={{
             type: "password",
-            required: true,
             onChange: handleChange,
+            required: true,
             name: "password",
             value: password,
           }}
@@ -69,7 +89,7 @@ const SignInForm = () => {
           <Button buttonOptions={{ type: "submit" }}>Sign in</Button>
           <Button
             buttonType={"google"}
-            buttonOptions={{ onClick: signInWithGoogle }}
+            buttonOptions={{ type: "button", onClick: signInWithGoogle }}
           >
             Google Sign in
           </Button>
