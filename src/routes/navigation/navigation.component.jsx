@@ -6,7 +6,7 @@ import {
   NavLinks,
   NavLink,
   NavigationContainer,
-} from "./navigation.styles.jsx";
+} from "./navigation.styles";
 import { UserContext } from "../../context/user.context";
 import { CartContext } from "../../context/cart.context";
 import { signOutUser } from "../../utils/firebase/firebase.utils";
