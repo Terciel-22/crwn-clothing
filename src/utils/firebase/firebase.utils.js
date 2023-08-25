@@ -39,7 +39,7 @@ export const auth = getAuth();
 export const signInWithGooglePopup = () =>
   signInWithPopup(auth, googleProvider);
 
-export const db = getFirestore();
+export const db = getFirestore(firebaseApp);
 
 export const addCollectionAndDocuments = async (
   collectionKey,
